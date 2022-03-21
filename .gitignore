@@ -1,2 +1,21 @@
+# rust files
 /target
 **/*.rs.bk
+
+# keep template config files but don't inclue any
+# config files in parent directory (because it is
+# usually created when testing project locally)
+/.husky
+.eslintignore
+!/templates/**/.eslintignore
+.eslintrc.json
+!/templates/**/.eslintrc.json
+.prettierrc
+!/templates/**/.prettierrc
+.lintstagedrc
+!/templates/**/.lintstagedrc
+package.json
+package-backup.json
+
+# dev environment files
+/.idea

@@ -6,10 +6,7 @@ use std::process::Command;
 
 pub type CustomResult<T> = Result<T, Box<dyn Error>>;
 
-pub fn copy_file_contents_to_another_file(
-    in_path: &String,
-    out_path: &String,
-) -> Result<(), Box<dyn Error>> {
+pub fn copy_file_contents_to_another_file(in_path: &String, out_path: &String) -> CustomResult<()> {
     let content = fs::read_to_string(in_path).expect("Unable to read file");
     let mut file = File::create(out_path)?;
     file.write_all(content.as_ref())?;
@@ -21,10 +18,18 @@ pub fn read_lines(in_path: &String) -> CustomResult<Lines<BufReader<File>>> {
     Ok(BufReader::new(file).lines())
 }
 
+pub fn get_package_manager() -> &'static str {
+    if Path::new("package-lock.json").exists() {
+        "npm"
+    } else {
+        "yarn"
+    }
+}
+
 pub fn install_deps(mut deps: Vec<String>) -> CustomResult<()> {
     // 1. infer yarn or npm. defaults to yarn
     let argv;
-    if Path::new("package-lock.json").exists() {
+    if get_package_manager().eq("npm") {
         argv = vec!["npm", "install", "--dev"];
     } else {
         argv = vec!["yarn", "add", "-D"];

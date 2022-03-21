@@ -1,6 +1,6 @@
 @testing-library/jest-dom
 @testing-library/react
 @types/react-test-renderer
-@type/jest
+@types/jest
 lint-staged
 react-test-renderer

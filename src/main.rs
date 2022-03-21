@@ -3,10 +3,10 @@ use inquire::{MultiSelect, Select};
 use setups::{eslint_setup, migrate_setup};
 
 use crate::constants::{
-    EDITORCONFIG, ESLINT, MIGRATE_JS_TO_TS_OPTION, PRETTIER, SETUP_REACT_PROJECT_OPTION,
+    EDITORCONFIG, ESLINT, HUSKY, MIGRATE_JS_TO_TS_OPTION, PRETTIER, SETUP_REACT_PROJECT_OPTION,
     SETUP_TS_PROJECT_OPTION,
 };
-use crate::setups::{editorconfig_setup, prettier_setup};
+use crate::setups::{editorconfig_setup, husky_setup, prettier_setup};
 
 mod constants;
 mod setups;
@@ -22,36 +22,35 @@ fn main() {
     let ans = Select::new("Select your config action:", top_level_options).prompt();
 
     match ans {
+        Err(err) => eprintln!("{:?}", err),
         Ok(option) => {
             match option {
-                SETUP_TS_PROJECT_OPTION => setup_options("eslint-ts"),
-                SETUP_REACT_PROJECT_OPTION => setup_options("eslint-tsx"),
+                SETUP_TS_PROJECT_OPTION => setup_options("ts"),
+                SETUP_REACT_PROJECT_OPTION => setup_options("tsx"),
                 MIGRATE_JS_TO_TS_OPTION => migrate_setup::run(),
                 _ => panic!("Invalid option selected!"),
             };
         }
-        Err(_) => println!("The config action could not be acted upon"),
     }
 }
 
 fn setup_options(setup_type: &str) {
-    let mid_level_options = vec![ESLINT, PRETTIER, EDITORCONFIG];
+    let mid_level_options = vec![ESLINT, PRETTIER, EDITORCONFIG, HUSKY];
 
     let ans = MultiSelect::new("Select services to add:", mid_level_options).prompt();
 
     match ans {
+        Err(err) => eprintln!("{:?}", err),
         Ok(options) => {
             for option in options {
                 match option {
                     ESLINT => eslint_setup::run(&setup_type),
                     PRETTIER => prettier_setup::run(),
                     EDITORCONFIG => editorconfig_setup::run(),
-                    _ => eprintln!("something bad happened..."),
+                    HUSKY => husky_setup::run(&setup_type),
+                    _ => panic!("something bad happened..."),
                 }
             }
-        }
-        Err(_) => {
-            println!("Something wrong happened!")
         }
     }
 }

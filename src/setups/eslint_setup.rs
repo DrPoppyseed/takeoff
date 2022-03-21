@@ -25,7 +25,7 @@ fn eslint_install_deps(setup_type: &str) -> CustomResult<()> {
 }
 
 fn get_deps(setup_type: &str) -> CustomResult<Lines<BufReader<File>>> {
-    let mut path = String::from("./templates/");
+    let mut path = String::from("./templates/eslint-");
     path.push_str(setup_type);
     path.push_str("/dependencies");
 
@@ -33,14 +33,15 @@ fn get_deps(setup_type: &str) -> CustomResult<Lines<BufReader<File>>> {
 }
 
 fn path_to_eslintrc(setup_type: &str) -> String {
-    let mut path = String::from("./templates/");
+    let mut path = String::from("./templates/eslint-");
+    println!("{:?}", setup_type);
     path.push_str(setup_type);
     path.push_str("/.eslintrc.json");
     return path;
 }
 
 fn path_to_eslintignore(setup_type: &str) -> String {
-    let mut path = String::from("./templates/");
+    let mut path = String::from("./templates/eslint-");
     path.push_str(setup_type);
     path.push_str("/.eslintignore");
     return path;
