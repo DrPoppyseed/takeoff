@@ -1,13 +1,15 @@
 use inquire::{MultiSelect, Select};
 
+use setups::{eslint_setup, migrate_setup};
+
 use crate::constants::{
     EDITORCONFIG, ESLINT, MIGRATE_JS_TO_TS_OPTION, PRETTIER, SETUP_REACT_PROJECT_OPTION,
     SETUP_TS_PROJECT_OPTION,
 };
+use crate::setups::{editorconfig_setup, prettier_setup};
 
 mod constants;
-mod eslint_setup;
-mod prettier_setup;
+mod setups;
 mod utility;
 
 fn main() {
@@ -22,9 +24,9 @@ fn main() {
     match ans {
         Ok(option) => {
             match option {
-                SETUP_TS_PROJECT_OPTION => setup_options("ts"),
-                SETUP_REACT_PROJECT_OPTION => setup_options("tsx"),
-                MIGRATE_JS_TO_TS_OPTION => println!("migrate!"),
+                SETUP_TS_PROJECT_OPTION => setup_options("eslint-ts"),
+                SETUP_REACT_PROJECT_OPTION => setup_options("eslint-tsx"),
+                MIGRATE_JS_TO_TS_OPTION => migrate_setup::run(),
                 _ => panic!("Invalid option selected!"),
             };
         }
@@ -43,8 +45,8 @@ fn setup_options(setup_type: &str) {
                 match option {
                     ESLINT => eslint_setup::run(&setup_type),
                     PRETTIER => prettier_setup::run(),
-                    EDITORCONFIG => println!("{}", EDITORCONFIG),
-                    _ => println!("something bad happened..."),
+                    EDITORCONFIG => editorconfig_setup::run(),
+                    _ => eprintln!("something bad happened..."),
                 }
             }
         }

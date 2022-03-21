@@ -21,7 +21,7 @@ pub fn read_lines(in_path: &String) -> CustomResult<Lines<BufReader<File>>> {
     Ok(BufReader::new(file).lines())
 }
 
-pub fn install_deps(deps: Vec<String>) -> CustomResult<()> {
+pub fn install_deps(mut deps: Vec<String>) -> CustomResult<()> {
     // 1. infer yarn or npm. defaults to yarn
     let argv;
     if Path::new("package-lock.json").exists() {
@@ -30,12 +30,12 @@ pub fn install_deps(deps: Vec<String>) -> CustomResult<()> {
         argv = vec!["yarn", "add", "-D"];
     }
 
-    // 2. combine deps with package manager commands
+    // 2. combine dependencies with package manager commands
     let mut command = argv
         .iter()
         .map(|c| String::from(*c))
         .collect::<Vec<String>>();
-    command.append(&mut &deps);
+    command.append(&mut deps);
 
     Command::new(&command[0])
         .args(&command[1..])
@@ -45,4 +45,19 @@ pub fn install_deps(deps: Vec<String>) -> CustomResult<()> {
         .expect("Unable to wait for subprocesses");
 
     Ok(())
+}
+
+pub fn get_line_contents(lines: CustomResult<Lines<BufReader<File>>>) -> Vec<String> {
+    let mut deps: Vec<String> = vec![];
+    match lines {
+        Err(err) => eprintln!("{}", err),
+        Ok(lines) => {
+            for line in lines {
+                if let Ok(ip) = line {
+                    deps.push(ip);
+                }
+            }
+        }
+    };
+    deps
 }
