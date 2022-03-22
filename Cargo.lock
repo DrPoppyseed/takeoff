@@ -409,7 +409,6 @@ dependencies = [
  "futures",
  "inquire",
  "npm-package-json",
- "serde",
  "serde_json",
 ]
 
