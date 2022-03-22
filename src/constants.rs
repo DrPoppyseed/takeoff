@@ -1,8 +1,8 @@
 // top level options
 pub const SETUP_TS_PROJECT_OPTION: &'static str =
-    "Setup rules and formatters to an existing Typescript project";
+  "Setup rules and formatters to an existing Typescript project";
 pub const SETUP_REACT_PROJECT_OPTION: &'static str =
-    "Setup rules and formatters to an existing React-Typescript project";
+  "Setup rules and formatters to an existing React-Typescript project";
 pub const MIGRATE_JS_TO_TS_OPTION: &'static str = "Migrate JS project to TS";
 pub const MIGRATE_JS_REACT_PROJECT_TO_OPTION: &'static str = "Migrate React JS project to TS";
 pub const ADD_LICENSE: &'static str = "Add License";
