@@ -79,8 +79,7 @@ fn replace_last_line_in_file() -> CustomResult<()> {
         res.push_str("yarn run lint-staged");
     }
 
-    let mut file = File::create(".husky/pre-commit")?;
-    file.write_all(res.as_ref())?;
+    fs::write(".husky/pre-commit", res).expect("Unable to write file");
     Ok(())
 }
 
