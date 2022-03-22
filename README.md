@@ -6,6 +6,21 @@ package.json scripts or Husky's pre-commit files accordingly.
 
 Takeoff was written entirely with rust, with the help of the [inquire](https://github.com/mikaelmello/inquire) crate.
 
+## Installation
+
+Install using homebrew for MacOS.
+
+```bash
+$ brew tap DrPoppyseed/takeoff && brew install takeoff
+```
+
+Check if the installation went successfully
+
+```bash
+$ takeoff --version
+takeoff 0.1.0
+```
+
 ## Features
 
 Takeoff supports

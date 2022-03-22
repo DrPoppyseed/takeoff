@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, HashMap};
 use std::fs;
 use std::fs::{File, OpenOptions};
-use std::io::{BufRead, BufReader, Lines, Write};
+use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::Command;
 
@@ -10,8 +10,7 @@ use npm_package_json::Package;
 use serde_json::{from_str, Value};
 
 use crate::utility::{
-  copy_file_contents_to_another_file, get_line_contents, get_package_manager, install_deps,
-  read_lines, CustomResult,
+  copy_file_contents_to_another_file, get_package_manager, install_deps, CustomResult,
 };
 
 pub fn run(setup_type: &str) {
@@ -20,7 +19,18 @@ pub fn run(setup_type: &str) {
 
 async fn husky_install_deps(setup_type: &str) {
   // get dependencies
-  let deps = get_line_contents(get_deps(setup_type));
+  let deps = if setup_type.eq("ts") {
+    vec!["lint-staged", "jest"]
+  } else {
+    vec![
+      "@testing-library/jest-dom",
+      "@testing-library/react",
+      "@types/react-test-renderer",
+      "@types/jest",
+      "lint-staged",
+      "react-test-renderer",
+    ]
+  };
   install_deps(deps).unwrap();
 
   let mut command = vec!["npx", "husky-init", "&&"];
@@ -187,15 +197,17 @@ async fn build_lintstagedrc(setup_type: &str, configs: Vec<&'static str>) -> Cus
   script_name_lines.push_str("\n");
 
   let mut res = String::new();
-  let lines = read_lines(&path_to_lintstagedrc(setup_type)).unwrap();
-  for (i, line) in lines.enumerate() {
-    if let Ok(ip) = line {
-      res.push_str(&ip.to_string());
-      if i == 1 {
-        res.push_str(&script_name_lines);
-      } else {
-        res.push_str("\n");
-      }
+  let lines = if setup_type.eq("ts") {
+    vec!["{", "\t\"*.{js,ts}\": [", "\t]", "}"]
+  } else {
+    vec!["{", "\t\"*.{js,jsx,ts,tsx}\": [", "\t]", "}"]
+  };
+  for (i, line) in lines.iter().enumerate() {
+    res.push_str(&line.to_string());
+    if i == 1 {
+      res.push_str(&script_name_lines);
+    } else {
+      res.push_str("\n");
     }
   }
 
@@ -217,19 +229,4 @@ fn get_existing_configs() -> Vec<&'static str> {
     }
   }
   existing_configs
-}
-
-fn path_to_lintstagedrc(setup_type: &str) -> String {
-  let mut path = String::from("./templates/husky-");
-  path.push_str(setup_type);
-  path.push_str("/.lintstagedrc");
-  return path;
-}
-
-fn get_deps(setup_type: &str) -> CustomResult<Lines<BufReader<File>>> {
-  let mut path = String::from("./templates/husky-");
-  path.push_str(setup_type);
-  path.push_str("/dependencies");
-
-  read_lines(&path)
 }

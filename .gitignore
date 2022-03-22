@@ -16,7 +16,6 @@
 !/templates/**/.lintstagedrc
 package.json
 package-backup.json
-LICENSE
 
 # dev environment files
 /.idea

@@ -1,35 +1,61 @@
-use std::fs::File;
-use std::io::{BufReader, Lines};
+use crate::utility::{install_deps, string_to_file, CustomResult};
 
-use crate::utility::{
-    copy_file_contents_to_another_file, get_line_contents, install_deps, read_lines, CustomResult,
-};
+const TS_TSCONFIG: &str = r##"{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES6",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "src"
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts"]
+}
+"##;
+const TSX_TSCONFIG: &str = r##"{
+  "compilerOptions": {
+    "outDir": "./build",
+    "allowJs": true,
+    "target": "es6",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["./src/**/*"]
+}
+"##;
 
 pub fn run(setup_type: &str) {
-    migrate_install_deps(setup_type).unwrap();
+  migrate_install_deps(setup_type).unwrap();
+  let content = if setup_type.eq("ts") {
+    TS_TSCONFIG
+  } else {
+    TSX_TSCONFIG
+  };
 
-    copy_file_contents_to_another_file(&get_path(setup_type), &String::from("tsconfig.json"))
-        .unwrap();
+  string_to_file(content, &"tsconfig.json".to_string()).unwrap();
 }
 
 fn migrate_install_deps(setup_type: &str) -> CustomResult<()> {
-    let deps = get_line_contents(get_deps(setup_type));
+  let deps = if setup_type.eq("ts") {
+    vec!["typescript"]
+  } else {
+    vec!["typescript"]
+  };
 
-    install_deps(deps)
-}
-
-fn get_deps(setup_type: &str) -> CustomResult<Lines<BufReader<File>>> {
-    let mut path = String::from("./templates/migrate-");
-    path.push_str(setup_type);
-    path.push_str("/dependencies");
-
-    read_lines(&path)
-}
-
-fn get_path(setup_type: &str) -> String {
-    let mut path = String::from("./templates/migrate-");
-    path.push_str(setup_type);
-    path.push_str("/tsconfig.json");
-
-    path
+  install_deps(deps)
 }

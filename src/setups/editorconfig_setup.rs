@@ -1,9 +1,15 @@
-use crate::utility::copy_file_contents_to_another_file;
+use crate::utility::string_to_file;
+
+const EDITOR_CONFIG: &str = "\
+root = true
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+trim_trailing_whitespace = true
+indent_size = 2
+";
 
 pub fn run() {
-    copy_file_contents_to_another_file(
-        &String::from("./templates/editorconfig/.editorconfig"),
-        &String::from(".editorconfig"),
-    )
-    .unwrap();
+  string_to_file(&EDITOR_CONFIG.to_string(), ".editorconfig").unwrap();
 }
